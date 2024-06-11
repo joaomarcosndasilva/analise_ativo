@@ -7,8 +7,22 @@ from plotly.subplots import make_subplots
 
 def pagina_web():
     st.title('Análise de Ativos da B3')
+    st.write('By J. Brutus')
     st.sidebar.title('Digite o código do ativo:')
-    ativo = st.sidebar.text_input('Digite o código e aperte enter...', 'VALE3')
+    ativo = st.sidebar.text_input('Digite o código e aperte ENTER...', 'VALE3')
+    ########################## indicadores####################################
+    st.sidebar.subheader('Selecione um indicador para análise:')
+    mm = st.sidebar.checkbox('Cruzamento de Médias')
+    bollinger = st.sidebar.checkbox('Bandas de Bollinger')
+    mcd = st.sidebar.checkbox('Indicador MACD')
+
+    ########################## previsores de preço ##########################
+    st.sidebar.subheader('Selecione um dos previsores de preço:')
+    st.sidebar.checkbox('Regressão Linear')
+    st.sidebar.checkbox('Modelo ARIMA')
+    st.sidebar.checkbox('Teste com vários modelos (DEMORADO)')
+    st.sidebar.checkbox('Rede Neural artificial (RN) (DEMORADO)')
+
     ticket = yf.Ticker(f'{ativo}.SA')
     df = ticket.history(period='5y')
 
