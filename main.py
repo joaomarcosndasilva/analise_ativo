@@ -11,7 +11,7 @@ icone_info = "ℹ️"
 icone_warning = "⚠️"
 icone_erro = "🚨"
 icone_sucess = "✅"
-titulo1 = 'Análise de ativos. V 1.0'
+titulo1 = 'Análise de ativos V 1.0'
 titulo2 = 'Esta aplicação analisa e preve o preço de fechamento do dia de qualquer ativo da B3'
 comentario = 'As atualizações ocorrem frequentemente, então sempre entre para chegar o que há de mais atual :)'
 
