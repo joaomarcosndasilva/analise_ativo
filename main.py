@@ -11,6 +11,9 @@ icone_info = "ℹ️"
 icone_warning = "⚠️"
 icone_erro = "🚨"
 icone_sucess = "✅"
+titulo1 = 'Análise de ativos. V 1.0'
+titulo2 = 'Esta aplicação analisa e preve o preço de fechamento do dia de qualquer ativo da B3'
+comentario = 'As atualizações ocorrem frequentemente, então sempre entre para chegar o que há de mais atual :)'
 
 acoes_ibov = ['RRRP3','ALOS3','ALPA4','ABEV3','ARZZ3','ASAI3', 'AZUL4','B3SA3','BBSE3','BBDC3','BBDC4','BRAP4','BBAS3',
 'BRKM5', 'BRFS3', 'BPAC11','CRFB3','CCRO3','CMIG4','CIEL3','COGN3', 'CPLE6','CSAN3','CPFE3','CMIN3','CVCB3', 'CYRE3',
@@ -46,7 +49,7 @@ def graficos_analises():
         st.line_chart(df.Dividends)
     st.sidebar.warning('PREVER PREÇOS FUTUROS', icon=icone_warning)
 
-    lr = st.sidebar.checkbox('Regressão Linear')
+    lr = st.sidebar.checkbox('Regressão Linear (LR)')
     if lr:
         with st.spinner('Aguarde...'):
             sleep(1)
@@ -54,18 +57,23 @@ def graficos_analises():
             #except:
              #   st.error('A Regressão Linear ainda não está funcionando, por favor, aguarde + alguns dias', icon=icone_erro)
 
-    cb_fbprophet = st.sidebar.checkbox('Prophet (Previsor do Facebook)')
+    cb_neural = st.sidebar.checkbox('Rede Neural Artificial (RNA)')
+    if cb_neural:
+        with st.spinner('Aguarde...'):
+            sleep(0.5)
+        st.error('A (RN) Rede Neural, ainda não funciona. Aguarde o próximo commit :).', icon=icone_erro)
+
+    pycaret = st.sidebar.checkbox('Vários Algorítimos (PYCARET)')
+    if pycaret:
+        with st.spinner('Aguarde...'):
+            sleep(0.5)
+        st.error('Ainda estou ajustando, talvez no pŕoximo commit já estará funcionando :).', icon=icone_erro)
+
+    cb_fbprophet = st.sidebar.checkbox('Previsor da COVID (PROPHET)')
     if cb_fbprophet:
         with st.spinner('Aguarde...'):
             sleep(0.5)
         st.error('O PROPHET ainda não estão funcionando, por favor, aguarde + alguns dias', icon=icone_erro)
-
-    cb_neural = st.sidebar.checkbox('REDE NEURAL')
-    if cb_neural:
-        with st.spinner('Aguarde...'):
-            sleep(0.5)
-        st.error('Nenhuma (RN) Rede Neural para previsão ainda, por favor, alguns + alguns dias', icon=icone_erro)
-
 
 def analisar_ativo(codigo_ativo='CPLE6', periodo_analisado='9'):
     global figura, df
@@ -93,9 +101,9 @@ def analisar_ativo(codigo_ativo='CPLE6', periodo_analisado='9'):
     teste_inicial = total_inicial - 15
 
     ########################################################################################################################
-    st.write('A SEPARAÇÃO DOS DADOS SEGUE A SEGUINTE DIVISÃO:')
-    st.write(f'\nTreino 0:{treino} - Teste {treino}:{teste} - Validação {teste}:{total}')
-    st.write(f'Treino 0:{treino_inicial} - Teste {treino_inicial}:{teste_inicial} - Validação {teste_inicial}:{total_inicial}')
+    st.subheader('A SEPARAÇÃO DOS DADOS SEGUE A SEGUINTE DIVISÃO:')
+    st.write(f'\nTreino das linhas 0 até {treino} - Teste da linha {treino} até {teste} - Validação da linha {teste} até {total}')
+    #st.write(f'Treino 0:{treino_inicial} - Teste {treino_inicial}:{teste_inicial} - Validação {teste_inicial}:{total_inicial}')
     ########################################################################################################################
 
     df = df.reset_index()
@@ -148,10 +156,10 @@ def analisar_ativo(codigo_ativo='CPLE6', periodo_analisado='9'):
     y_test = y_labels[treino:teste]
     y_test_inicial = y_labels[treino_inicial:teste_inicial]
 
-
+    st.subheader('Explicação do modelo de Regressão Linear:')
     st.write(f'\nO modelo aprenderá com os dados da linha 0 a {treino} das variáveis {list(x_features.columns)}')
     st.write(f'O modelo testará com os dados da linha {treino} a {teste} da variável Close')
-    st.write('\nNa Setunda Parte: ')
+    st.write('\nNa Segunda Parte: ')
     st.write(f'O modelo aprenderá com os dados da linha 0 a {treino_inicial} das variáveis {list(x_features_inicial.columns)}')
     st.write(f'O modelo testará com os dados da linha {treino_inicial} a {teste_inicial} da variável Close')
 
@@ -241,11 +249,10 @@ def rodar_nova():
 
   return
 
-st.title('Análise de ativos da B3 - Versão beta 1.0')
+st.title(titulo1)
+st.subheader(titulo2)
+st.write(comentario)
 st.write('by J. Brutus')
-st.subheader('Essa aplicação é capaz de analisar e prever o preço do dia seguinte de todos os ativos da B3.')
-st.write('Ainda tenho muitas coisas para atualizar, e no momento a única que funciona é a Regressão Linear. Simples mas extremamente eficiente!')
-
 st.sidebar.success('ANÁLISE/ PREVISÃO DE ATIVOS', icon=icone_info)
 
 select_modo = st.sidebar.radio("Selecione como você quer ver a análise", ("Lista de ativos", "Digitar o código"))
