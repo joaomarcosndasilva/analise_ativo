@@ -11,9 +11,9 @@ icone_info = "ℹ️"
 icone_warning = "⚠️"
 icone_erro = "🚨"
 icone_sucess = "✅"
-titulo1 = 'Análise de ativos V 1.0'
-titulo2 = 'Esta aplicação analisa e preve o preço de fechamento do dia de qualquer ativo da B3'
-comentario = 'As atualizações ocorrem frequentemente, então sempre entre para chegar o que há de mais atual :)'
+titulo1 = 'Análise de ativos da B3 V 1.1'
+titulo2 = 'Analisa e preve o preços de fechamentos do dia posterior'
+comentario = 'As atualizações ocorrem frequentemente, estou trabalhando duro para que estarem prontas todas as funcionalidades - by J.Brutus :)'
 
 acoes_ibov = ['RRRP3','ALOS3','ALPA4','ABEV3','ARZZ3','ASAI3', 'AZUL4','B3SA3','BBSE3','BBDC3','BBDC4','BRAP4','BBAS3',
 'BRKM5', 'BRFS3', 'BPAC11','CRFB3','CCRO3','CMIG4','CIEL3','COGN3', 'CPLE6','CSAN3','CPFE3','CMIN3','CVCB3', 'CYRE3',
@@ -32,6 +32,9 @@ def graficos_analises():
 
     st.plotly_chart(fig)
 
+    cb_dados = st.sidebar.checkbox('Visualização das cotações')
+    if cb_dados:
+        st.dataframe(df)
     st.sidebar.info('GRÁFICOS', icon=icone_sucess)
 
     cb_volume = st.sidebar.checkbox('Gráfico de Volume')
@@ -250,13 +253,11 @@ def rodar_nova():
   st.subheader(f'ATENÇÃO: Se o grafico de {acao} estiver muto fora de escala, é devido a não atualização dos dados yfinance. '
                      'Geralmente atualizam próximo ao inicio do pregão, isto é, 10:00. ):')
 
-  return
 
 st.title(titulo1)
 st.subheader(titulo2)
 st.write(comentario)
-st.write('by J. Brutus')
-st.subheader(f'Análise do ativo ')
+
 st.sidebar.success('ANÁLISE/ PREVISÃO DE ATIVOS', icon=icone_info)
 
 select_modo = st.sidebar.radio("Selecione como você quer ver a análise", ("Lista de ativos que compões o IBOV", "Digitar o código"))
