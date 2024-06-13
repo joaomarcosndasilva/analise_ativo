@@ -25,7 +25,7 @@ acoes_ibov = ['RRRP3','ALOS3','ALPA4','ABEV3','ARZZ3','ASAI3', 'AZUL4','B3SA3','
 acoes_ibov = sorted(acoes_ibov)
 
 def graficos_analises():
-    global df
+    global df, acao
     ticket = yf.Ticker(acao)
     df = ticket.history(period='5y')
     fig = px.line(df, df.index, df.Close)
@@ -101,7 +101,8 @@ def analisar_ativo(codigo_ativo='CPLE6', periodo_analisado='9'):
     teste_inicial = total_inicial - 15
 
     ########################################################################################################################
-    st.subheader('A SEPARAÇÃO DOS DADOS SEGUE A SEGUINTE DIVISÃO:')
+    st.subheader(f'A SEPARAÇÃO DOS DADOS SEGUE A SEGUINTE DIVISÃO:')
+    st.subheader(f'ATIVO {codigo_ativo.replace(".SA", "")}:')
     st.write(f'\nTreino das linhas 0 até {treino} - Teste da linha {treino} até {teste} - Validação da linha {teste} até {total}')
     #st.write(f'Treino 0:{treino_inicial} - Teste {treino_inicial}:{teste_inicial} - Validação {teste_inicial}:{total_inicial}')
     ########################################################################################################################
@@ -201,7 +202,6 @@ def analisar_ativo(codigo_ativo='CPLE6', periodo_analisado='9'):
 
     plt.grid()
     plt.legend()
-    #st.pyplot(figura)
 
     rodar_nova()
 
@@ -225,7 +225,9 @@ def rodar_nova():
   hoje = datetime.date.today()
 
   previsao_hoje = pd.DataFrame({'Data':hoje, 'Preco Previsto': y_previsto})
-
+  st.success('******************************************* PREVISÃO *********************************************')
+  st.subheader(f'PREVISÃO PARA O FECHAMENTO = D+1 = R$ {round(float(y_previsto),2):.2f}')
+  st.success('******************************************* PREVISÃO *********************************************')
   ###############################################################################
 
 
@@ -236,7 +238,7 @@ def rodar_nova():
   ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))
   ax.xaxis.set_tick_params(rotation=30)
 
-  ax.set_title(f'\n\nPrevisão do preço de fechamento para hoje, {hoje.strftime("%d/%m/%Y")} (EM VERDE), do ativo {ativo.replace(".SA", "")}\nCoeficiente R2 de {round(coeficiente * 100, 2)}% - By J. Brutus', fontsize=24)
+  ax.set_title(f'\n\nPrevisão do preço de fechamento para hoje, {hoje.strftime("%d/%m/%Y")} (EM VERDE), do ativo {ativo.replace(".SA", "")}\nCoeficiente R2 de {round(coeficiente * 100, 2)}% - R$  - By J. Brutus', fontsize=24)
   ax.set_ylabel('Preço do ativo em R$', fontsize=14)
   ax.plot(df2['Data'], df2['Cotacao'], marker='o', label='Cotação Real', color='blue')
   ax.plot(df2['Data'], df2['Previsto'], marker='o', label='Cotação Prevista', color='red')
@@ -245,7 +247,8 @@ def rodar_nova():
   plt.grid()
   plt.legend()
   st.pyplot(figura)
-
+  st.subheader(f'ATENÇÃO: Se o grafico de {acao} estiver muto fora de escala, é devido a não atualização dos dados yfinance. '
+                     'Geralmente atualizam próximo ao inicio do pregão, isto é, 10:00. ):')
 
   return
 
@@ -253,12 +256,13 @@ st.title(titulo1)
 st.subheader(titulo2)
 st.write(comentario)
 st.write('by J. Brutus')
+st.subheader(f'Análise do ativo ')
 st.sidebar.success('ANÁLISE/ PREVISÃO DE ATIVOS', icon=icone_info)
 
-select_modo = st.sidebar.radio("Selecione como você quer ver a análise", ("Lista de ativos", "Digitar o código"))
+select_modo = st.sidebar.radio("Selecione como você quer ver a análise", ("Lista de ativos que compões o IBOV", "Digitar o código"))
 
 if select_modo == "Digitar o código":
-    acao = st.sidebar.text_input('Digite o código do Ativo e selecione as datas!', 'VALE3', help='Digite o código do ativo sem o ".SA" e pressione ENTER. ')
+    acao = st.sidebar.text_input('Digite o código do Ativo:', 'VALE3', help='Digite o código do ativo sem o ".SA" e pressione ENTER. ')
     acao = f'{acao}.SA'
     if acao:
         try:
@@ -267,7 +271,7 @@ if select_modo == "Digitar o código":
             st.warning(f'Você digitou o ativo {acao}. e selecionou os períodos ')
             st.error("Alguma coisa não está certa. Tente alterar o período de datas")
 
-elif select_modo == "Lista de ativos":
+elif select_modo == "Lista de ativos que compões o IBOV":
     papeis = acoes_ibov
     acao = st.sidebar.selectbox(f'Selecione um dos {len(papeis)} que compões o IBOV:', papeis, help=f"Está Lista contém {len(papeis)} ativos de ações que compõpes o índice do Ibovespa. Os ativos são açoes preferenciais,"
                                                                    f"ações ordinárias e unitis...")
