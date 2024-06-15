@@ -47,8 +47,10 @@ def graficos_analises():
     bal = bal / 1000
     bal = bal[bal.columns[::-1]]
 
-    fig_1 = px.line(df, df.index, df.Close)
-    st.plotly_chart(fig_1)
+    cotacao = st.sidebar.checkbox('Gráfico ao longo do tempo')
+    if cotacao:
+        fig_1 = px.line(df, df.index, df.Close)
+        st.plotly_chart(fig_1)
     fundamentalista = st.sidebar.checkbox('Análise Fundamentalista')
     if fundamentalista:
         with st.spinner('Aguarde...'):
@@ -233,6 +235,7 @@ def analisar_ativo(codigo_ativo='CPLE6', periodo_analisado='9'):
     df2 = pd.DataFrame({'Data': dia, 'Cotacao': real, 'Previsto': y_pred})
     df2['Cotacao'] = df2['Cotacao'].shift(+1)
     df2['Diferença'] = df2['Previsto'] - df2['Cotacao']
+    df2 = df2.iloc[1:, :]
     st.subheader('Teste de Previsão')
     st.dataframe(df2)
 
@@ -304,6 +307,7 @@ st.title(titulo1)
 st.subheader(titulo2)
 st.write(comentario)
 
+
 st.sidebar.success('ANÁLISE/ PREVISÃO DE ATIVOS', icon=icone_info)
 
 select_modo = st.sidebar.radio("Selecione como você quer ver a análise", ("Lista de ativos que compões o IBOV", "Digitar o código"))
@@ -327,3 +331,6 @@ elif select_modo == "Lista de ativos que compões o IBOV":
 
 else:
     st.info('Marque como você vai querer a análise')
+
+st.subheader(f'Ativo analisado: {acao.replace(".SA","")}')
+st.write('Marque e desmarque os checkbox')
