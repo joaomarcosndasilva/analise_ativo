@@ -53,26 +53,25 @@ def graficos_analises():
     if fundamentalista:
         with st.spinner('Aguarde...'):
             sleep(1)
-        analisar_ativo(codigo_ativo=acao)
-        fig = make_subplots(rows=2,
+        figf = make_subplots(rows=2,
                             cols=2,
                             row_heights=[5, 5],
                             column_widths=[3, 3],
                             subplot_titles=('EBITIDA', 'Lucro Líquido', 'Dívida Corrente', 'Dívida Total'),
                             shared_xaxes=False)
 
-        fig.add_trace(go.Bar(name='EBTIDA', x=dre.columns, y=dre.loc['EBITDA']), row=1, col=1)
-        fig.add_trace(go.Bar(name='Lucro Líquido', x=dre.columns, y=dre.loc['NetIncome']), row=1, col=2)
+        figf.add_trace(go.Bar(name='EBTIDA', x=dre.columns, y=dre.loc['EBITDA']), row=1, col=1)
+        figf.add_trace(go.Bar(name='Lucro Líquido', x=dre.columns, y=dre.loc['NetIncome']), row=1, col=2)
 
-        fig.add_trace(go.Bar(name='Dívida Líquida', x=bal.columns, y=bal.loc['CurrentDebt']), row=2, col=1)
-        fig.add_trace(go.Bar(name='Dívida Total', x=bal.columns, y=bal.loc['TotalDebt']), row=2, col=2)
+        figf.add_trace(go.Bar(name='Dívida Líquida', x=bal.columns, y=bal.loc['CurrentDebt']), row=2, col=1)
+        figf.add_trace(go.Bar(name='Dívida Total', x=bal.columns, y=bal.loc['TotalDebt']), row=2, col=2)
 
-        fig.update_layout(title_text='<b>Avaliação Fundamentalista</b>',
+        figf.update_layout(title_text='<b>Avaliação Fundamentalista</b>',
                           template='plotly_dark',
                           showlegend=False,
                           height=500,
                           width=1000)
-        st.plotly_chart(fig)
+        st.plotly_chart(figf)
 
     cb_dados = st.sidebar.checkbox('Visualização das cotações')
     if cb_dados:
