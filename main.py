@@ -6,6 +6,9 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import pandas as pd
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 
 icone_info = "ℹ️"
 icone_warning = "⚠️"
@@ -24,13 +27,52 @@ acoes_ibov = ['RRRP3','ALOS3','ALPA4','ABEV3','ARZZ3','ASAI3', 'AZUL4','B3SA3','
 
 acoes_ibov = sorted(acoes_ibov)
 
+
+def analise_fundamentalista():
+    """Esta função faz a s principais análises fundamentalistas necessárias"""
+pass
+
 def graficos_analises():
     global df, acao
     ticket = yf.Ticker(acao)
     df = ticket.history(period='5y')
-    fig = px.line(df, df.index, df.Close)
 
-    st.plotly_chart(fig)
+    dre = ticket.get_financials(freq='quarterly')
+    dre = pd.DataFrame(dre)
+    dre = dre / 1000
+    dre = dre[dre.columns[::-1]]
+
+    bal = ticket.get_balance_sheet(freq='yearly')
+    bal = pd.DataFrame(bal)
+    bal = bal / 1000
+    bal = bal[bal.columns[::-1]]
+
+    fig_1 = px.line(df, df.index, df.Close)
+    st.plotly_chart(fig_1)
+    fundamentalista = st.sidebar.checkbox('Análise Fundamentalista')
+    if fundamentalista:
+        with st.spinner('Aguarde...'):
+            sleep(1)
+        analisar_ativo(codigo_ativo=acao)
+        fig = make_subplots(rows=2,
+                            cols=2,
+                            row_heights=[5, 5],
+                            column_widths=[3, 3],
+                            subplot_titles=('EBITIDA', 'Lucro Líquido', 'Dívida Corrente', 'Dívida Total'),
+                            shared_xaxes=False)
+
+        fig.add_trace(go.Bar(name='EBTIDA', x=dre.columns, y=dre.loc['EBITDA']), row=1, col=1)
+        fig.add_trace(go.Bar(name='Lucro Líquido', x=dre.columns, y=dre.loc['NetIncome']), row=1, col=2)
+
+        fig.add_trace(go.Bar(name='Dívida Líquida', x=bal.columns, y=bal.loc['CurrentDebt']), row=2, col=1)
+        fig.add_trace(go.Bar(name='Dívida Total', x=bal.columns, y=bal.loc['TotalDebt']), row=2, col=2)
+
+        fig.update_layout(title_text='<b>Avaliação Fundamentalista</b>',
+                          template='plotly_dark',
+                          showlegend=False,
+                          height=500,
+                          width=1000)
+        st.plotly_chart(fig)
 
     cb_dados = st.sidebar.checkbox('Visualização das cotações')
     if cb_dados:
@@ -79,6 +121,7 @@ def graficos_analises():
         st.error('O PROPHET ainda não estão funcionando, por favor, aguarde + alguns dias', icon=icone_erro)
 
 def analisar_ativo(codigo_ativo='CPLE6', periodo_analisado='9'):
+    """"Esta função faz a análise do ativo atual e faz a regressão para calcular o preço futuro d+1"""
     global figura, df
     import pandas as pd
     global df, lr, y_de_amanha, df_inicial, x_features, scaler, total, teste, treino, validacao, coeficiente, df2, ativo
@@ -190,7 +233,9 @@ def analisar_ativo(codigo_ativo='CPLE6', periodo_analisado='9'):
 
     df2 = pd.DataFrame({'Data': dia, 'Cotacao': real, 'Previsto': y_pred})
     df2['Cotacao'] = df2['Cotacao'].shift(+1)
-
+    df2['Diferença'] = df2['Previsto'] - df2['Cotacao']
+    st.subheader('Teste de Previsão')
+    st.dataframe(df2)
 
     figura, ax = plt.subplots(figsize=(16, 8))
 
@@ -253,6 +298,8 @@ def rodar_nova():
   st.subheader(f'ATENÇÃO: Se o grafico de {acao} estiver muto fora de escala, é devido a não atualização dos dados yfinance. '
                      'Geralmente atualizam próximo ao inicio do pregão, isto é, 10:00. ):')
 
+
+######################################### PARTE DA INTERFACE ##########################################################
 
 st.title(titulo1)
 st.subheader(titulo2)
