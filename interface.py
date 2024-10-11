@@ -47,3 +47,4 @@ if reg_lin:
 rn = st.sidebar.checkbox('Previsão com Redes Neurais')
 if rn:
     st.sidebar.error('Aguenta só mais um pouquinho, Calabrezo, já faço o deploy')
+#pprint
